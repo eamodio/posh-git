@@ -21,14 +21,19 @@ function prompt {
 
     if ($GitPromptSettings.EnableWindowTitleOverride) {
         if ($GitStatus) {
-            $Host.UI.RawUI.WindowTitle = [string]::Format($GitPromptSettings.WindowTitleOverrideFormat, $pwd, "[$($GitStatus.Branch)]")
+            $Host.UI.RawUI.WindowTitle = [string]::Format($GitPromptSettings.WindowTitleOverrideFormat, $pwd, " [$($GitStatus.Branch)]")
         } else {
-            $Host.UI.RawUI.WindowTitle = [string]::Format($GitPromptSettings.WindowTitleOverrideFormat, $pwd)
+            $Host.UI.RawUI.WindowTitle = [string]::Format($GitPromptSettings.WindowTitleOverrideFormat, $pwd, "")
         }
     }
     
     $LASTEXITCODE = $realLASTEXITCODE
-    return "> "
+    if ($GitPromptSettings.PromptOnNewLine) {
+        return "`r`n> "
+    }
+    else {
+        return "> "
+    }
 }
 
 Enable-GitColors

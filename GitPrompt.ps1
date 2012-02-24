@@ -44,8 +44,9 @@ $global:GitPromptSettings = New-Object PSObject -Property @{
     EnableFileStatus          = $true
     RepositoriesInWhichToDisableFileStatus = @( ) # Array of repository paths
 
-    EnableWindowTitleOverride = $false
-    WindowTitleOverrideFormat = '{0} {1} - Windows Powershell' #{0}=$pwd, {1}=$GitStatus.Branch
+    PromptOnNewLine           = $false
+    EnableWindowTitleOverride = $true
+    WindowTitleOverrideFormat = '{0}{1} - Windows Powershell' #{0}=$pwd, {1}=$GitStatus.Branch
 
     Debug                     = $false
 }
