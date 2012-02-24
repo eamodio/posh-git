@@ -19,8 +19,14 @@ function prompt {
 
     Write-VcsStatus
 
-    $Host.UI.RawUI.WindowTitle = "$pwd $($GitStatus.Branch) - Windows Powershell"
-
+    if ($GitPromptSettings.EnableWindowTitleOverride) {
+        if ($GitStatus) {
+            $Host.UI.RawUI.WindowTitle = [string]::Format($GitPromptSettings.WindowTitleOverrideFormat, $pwd, "[$($GitStatus.Branch)]")
+        } else {
+            $Host.UI.RawUI.WindowTitle = [string]::Format($GitPromptSettings.WindowTitleOverrideFormat, $pwd)
+        }
+    }
+    
     $LASTEXITCODE = $realLASTEXITCODE
     return "> "
 }
