@@ -20,10 +20,15 @@ function prompt {
     Write-VcsStatus
 
     if ($GitPromptSettings.EnableWindowTitleOverride) {
-        if ($GitStatus) {
-            $Host.UI.RawUI.WindowTitle = [string]::Format($GitPromptSettings.WindowTitleOverrideFormat, $pwd, " [$($GitStatus.Branch)]")
-        } else {
-            $Host.UI.RawUI.WindowTitle = [string]::Format($GitPromptSettings.WindowTitleOverrideFormat, $pwd, "")
+        try {
+            if ($GitStatus) {
+                $Host.UI.RawUI.WindowTitle = [string]::Format($GitPromptSettings.WindowTitleOverrideFormat, $pwd, " [$($GitStatus.Branch)]")
+            } else {
+                $Host.UI.RawUI.WindowTitle = [string]::Format($GitPromptSettings.WindowTitleOverrideFormat, $pwd, "")
+            }
+        }
+        catch [System.Exception] {
+            $GitPromptSettings.EnableWindowTitleOverride = $false
         }
     }
     
