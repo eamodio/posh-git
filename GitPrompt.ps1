@@ -20,7 +20,7 @@ $global:GitPromptSettings = New-Object PSObject -Property @{
     BranchAheadForegroundColor  = [ConsoleColor]::Green
     BranchAheadBackgroundColor  = $Host.UI.RawUI.BackgroundColor
     BranchBehindForegroundColor = [ConsoleColor]::Red
-    BranchBehindBackgroundColor = $Host.UI.RawUI.BackgroundColor    
+    BranchBehindBackgroundColor = $Host.UI.RawUI.BackgroundColor
     BranchBehindAndAheadForegroundColor = [ConsoleColor]::Yellow
     BranchBehindAndAheadBackgroundColor = $Host.UI.RawUI.BackgroundColor
 
@@ -70,8 +70,7 @@ function Write-GitStatus($status) {
         if ($status.BehindBy -gt 0 -and $status.AheadBy -gt 0) {
             # We are behind and ahead of remote
             Write-Prompt $currentBranch -NoNewline -BackgroundColor $s.BranchBehindAndAheadBackgroundColor -ForegroundColor $s.BranchBehindAndAheadForegroundColor
-        }
-        elseif ($status.BehindBy -gt 0) {
+        } elseif ($status.BehindBy -gt 0) {
             # We are behind remote
             Write-Prompt $currentBranch -NoNewline -BackgroundColor $s.BranchBehindBackgroundColor -ForegroundColor $s.BranchBehindForegroundColor
         } elseif ($status.AheadBy -gt 0) {
