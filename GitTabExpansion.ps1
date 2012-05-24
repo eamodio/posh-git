@@ -64,28 +64,26 @@ function script:gitStashes($filter) {
         foreach { "'$_'" }
 }
 
-function script:gitIndex($filter) {
-    if($GitStatus) {
-        $GitStatus.Index |
-            where { $_ -like "$filter*" } |
-            foreach { if($_ -like '* *') { "'$_'" } else { $_ } }
-    }
+function script:gitFiles($filter, $files) {
+    $files | sort |
+        where { $_ -like "$filter*" } |
+        foreach { if($_ -like '* *') { "'$_'" } else { $_ } }
 }
 
-function script:gitFiles($filter) {
-    if($GitStatus) {
-        $GitStatus.Working |
-            where { $_ -like "$filter*" } |
-            foreach { if($_ -like '* *') { "'$_'" } else { $_ } }
-    }
+function script:gitIndex($filter) {
+    gitFiles $filter $GitStatus.Index
+}
+
+function script:gitAddFiles($filter) {
+    gitFiles $filter (@($GitStatus.Working.Unmerged) + @($GitStatus.Working.Modified) + @($GitStatus.Working.Added))
+}
+
+function script:gitCheckoutFiles($filter) {
+    gitFiles $filter (@($GitStatus.Working.Unmerged) + @($GitStatus.Working.Modified) + @($GitStatus.Working.Deleted))
 }
 
 function script:gitDeleted($filter) {
-    if($GitStatus) {
-        @($GitStatus.Working.Deleted) |
-            where { $_ -like "$filter*" } |
-            foreach { if($_ -like '* *') { "'$_'" } else { $_ } }
-    }
+    gitFiles $filter $GitStatus.Working.Deleted
 }
 
 function script:gitAliases($filter) {
@@ -177,28 +175,28 @@ function GitTabExpansion($lastBlock) {
         }
 
         # Handles git <cmd> <ref>
-        "^(?:checkout|cherry-pick|diff|difftool|log|merge|rebase|reflog\s+show|reset|revert|show).* (?<ref>\S*)$" {
-            gitBranches $matches['ref'] $true
-        }
-
-        # Handles git <cmd> <ref>
         "^commit.*-C\s+(?<ref>\S*)$" {
             gitBranches $matches['ref'] $true
         }
 
         # Handles git add <path>
         "^add.* (?<files>\S*)$" {
-            gitFiles $matches['files']
+            gitAddFiles $matches['files']
         }
 
         # Handles git checkout -- <path>
         "^checkout.* -- (?<files>\S*)$" {
-            gitFiles $matches['files']
+            gitCheckoutFiles $matches['files']
         }
 
         # Handles git rm <path>
         "^rm.* (?<index>\S*)$" {
             gitDeleted $matches['index']
+        }
+
+        # Handles git <cmd> <ref>
+        "^(?:checkout|cherry-pick|diff|difftool|log|merge|rebase|reflog\s+show|reset|revert|show).* (?<ref>\S*)$" {
+            gitBranches $matches['ref'] $true
         }
     }
 }

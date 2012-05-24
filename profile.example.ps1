@@ -32,7 +32,7 @@ function prompt {
         }
     }
     
-    $LASTEXITCODE = $realLASTEXITCODE
+    $global:LASTEXITCODE = $realLASTEXITCODE
     if ($GitPromptSettings.PromptOnNewLine) {
         return "`r`n> "
     }
