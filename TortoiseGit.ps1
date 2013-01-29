@@ -1,7 +1,7 @@
 # TortoiseGit 
 
 $Global:TortoiseGitSettings = new-object PSObject -Property @{
-  TortoiseGitPath = "C:\Program Files\TortoiseGit\bin\TortoiseProc.exe"
+  TortoiseGitPath = "C:\Program Files\TortoiseGit\bin\TortoiseGitProc.exe"
   TortoiseGitCommands = @{
     "about" = "about";
     "add" = "add";
