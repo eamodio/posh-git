@@ -9,7 +9,7 @@ Import-Module .\posh-git
 
 
 # Set up a simple prompt, adding the git prompt parts inside git repos
-function prompt {
+function global:prompt {
     $realLASTEXITCODE = $LASTEXITCODE
 
     # Reset color, which can be messed up by Enable-GitColors
@@ -19,19 +19,6 @@ function prompt {
 
     Write-VcsStatus
 
-    if ($GitPromptSettings.EnableWindowTitleOverride) {
-        try {
-            if ($GitStatus) {
-                $Host.UI.RawUI.WindowTitle = [string]::Format($GitPromptSettings.WindowTitleOverrideFormat, $pwd, " [$($GitStatus.Branch)]")
-            } else {
-                $Host.UI.RawUI.WindowTitle = [string]::Format($GitPromptSettings.WindowTitleOverrideFormat, $pwd, "")
-            }
-        }
-        catch [System.Exception] {
-            $GitPromptSettings.EnableWindowTitleOverride = $false
-        }
-    }
-    
     $global:LASTEXITCODE = $realLASTEXITCODE
     if ($GitPromptSettings.PromptOnNewLine) {
         return "`r`n> "

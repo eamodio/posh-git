@@ -47,10 +47,15 @@ $global:GitPromptSettings = New-Object PSObject -Property @{
     RepositoriesInWhichToDisableFileStatus = @( ) # Array of repository paths
 
     PromptOnNewLine           = $false
-    EnableWindowTitleOverride = $true
-    WindowTitleOverrideFormat = '{0}{1} - Windows Powershell' #{0}=$pwd, {1}=$GitStatus.Branch
+    EnableWindowTitle         = $true
+    WindowTitleFormat = '{0} {1} {2} ~ Powershell' #{0}=$pwd, {1}=RepoName, {2}=$GitStatus.Branch
 
     Debug                     = $false
+}
+
+$WindowTitleSupported = $true
+if (Get-Module NuGet) {
+    $WindowTitleSupported = $false
 }
 
 function Write-Prompt($Object, $ForegroundColor, $BackgroundColor = -1) {
@@ -127,6 +132,21 @@ function Write-GitStatus($status) {
         }
 
         Write-Prompt $s.AfterText -BackgroundColor $s.AfterBackgroundColor -ForegroundColor $s.AfterForegroundColor
+
+        if ($WindowTitleSupported -and $s.EnableWindowTitle) {
+            if( -not $Global:PreviousWindowTitle ) {
+                $Global:PreviousWindowTitle = $Host.UI.RawUI.WindowTitle
+            }
+
+            if ($status) {
+                $repoName = Split-Path -Leaf (Split-Path $status.GitDir)
+                $Host.UI.RawUI.WindowTitle = [string]::Format($GitPromptSettings.WindowTitleFormat, "", $repoName, "[$($status.Branch)]")
+            } else {
+                $Host.UI.RawUI.WindowTitle = [string]::Format($GitPromptSettings.WindowTitleFormat, $pwd, "", "")
+            }
+        }
+    } elseif ( $Global:PreviousWindowTitle ) {
+        $Host.UI.RawUI.WindowTitle = $Global:PreviousWindowTitle
     }
 }
 
