@@ -33,6 +33,7 @@ $Global:TortoiseGitSettings = new-object PSObject -Property @{
     "rebase" = "rebase";
     "refbrowse" = "refbrowse";
     "reflog" = "reflog";
+    "stash" = "stash";
     "remove" = "remove";
     "rm" = "remove";
     "rename" = "rename";
@@ -69,9 +70,15 @@ function tgit {
     }
 
     $newArgs = @()
-    $newArgs += "/command:" + $args[0]
-    
+
     $cmd = $args[0]
+    if ($cmd -eq "stash") {
+        $newArgs += "/command:reflog"
+        $newArgs += "/ref:refs/stash"
+    }
+    else {
+        $newArgs += "/command:" + $cmd
+    }
     
     if($args.length -gt 1) {
       $args[1..$args.length] | % { $newArgs += $_ }
