@@ -149,7 +149,10 @@ function Get-GitStatus($gitDir = (Get-GitDirectory)) {
             } else {
                 dbg 'Getting status' $sw
                 $status = git -c color.status=false status --short --branch 2>$null
-                $stashCount = $null | git stash list 2>$null | measure-object | select -expand Count
+                if($settings.EnableStashStatus) {
+                    dbg 'Getting stash count' $sw
+                    $stashCount = $null | git stash list 2>$null | measure-object | select -expand Count
+                }
 
                 dbg 'Parsing status' $sw
                 $status | foreach {
